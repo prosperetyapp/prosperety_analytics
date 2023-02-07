@@ -1,0 +1,22 @@
+{
+  "name": "prosperety_analytics",
+  "version": "1.0.0",
+  "description": "Package to track prosperety client websites",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prosperetyapp/prosperety_analytics.git"
+  },
+  "keywords": [
+    "prosperety"
+  ],
+  "author": "shubhamg",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/prosperetyapp/prosperety_analytics/issues"
+  },
+  "homepage": "https://github.com/prosperetyapp/prosperety_analytics#readme"
+}
