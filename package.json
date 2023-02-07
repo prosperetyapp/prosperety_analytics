@@ -1,6 +1,6 @@
 {
   "name": "@prosperety/analytics",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Package to track prosperety client websites",
   "main": "index.js",
   "scripts": {
