@@ -1,3 +1,7 @@
+var script = document.createElement("script");
+script.src = "https://prosperety.tritest.link/api/v1/js/scripts/analytics.js";
+document.head.appendChild(script);
+
 function setCookie(name, value, days) {
   var expires = "";
   if (days) {
@@ -28,11 +32,7 @@ export default function configureProsperety() {
   prosp_tag("js_time", Date.now());
   prosp_tag("config", "PROSP-9ul81zLpuFGn9nV");
 
-  var script = document.createElement("script");
-
-  script.src = "http://127.0.0.1:8000/js/scripts/analytics.js";
-
-  document.head.appendChild(script);
+  
 
   window.prosp_data = window.prosp_data || [];
   function prosp_tag(key, val) {
