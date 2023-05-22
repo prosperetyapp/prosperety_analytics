@@ -8,20 +8,20 @@ Author URI: Your Website
 */
 
 
-function pAnalyticUserStore() {
+function pAnalyticsStoreUser() {
     $output = '';
-    if ( isset( $_GET['username'] ) ) {
-        $output = '<script>
-        localStorage.setItem("pausername", "'. $_GET['username'].'");
-        </script>';
+    if (isset($_GET['username'])) {
+        $output = "<script>
+            localStorage.setItem('pAnalyticsUserName', '". $_GET['username']."');
+            </script>";
     }
-    return $output;
-}
-add_shortcode( 'initialize', 'pAnalyticUserStore' );
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $host = $_SERVER['HTTP_HOST'];
+    $currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
 
-function callUrlToProsperety() {
-    $output = "
+    $output .= "
     <script>
+    const requestFrom = '". $currentURL ."';
     jQuery( document ).ready(function($) {
         $('a').click(function() {
             analyticsSend('a', $(this).text());
@@ -34,10 +34,10 @@ function callUrlToProsperety() {
         });
     });
     function analyticsSend(elementType, elementText){
-        const pausername = localStorage.getItem('pausername');
-        if(pausername) {
+        const pAnalyticsUserName = localStorage.getItem('pAnalyticsUserName');
+        if(pAnalyticsUserName) {
             var img = new Image();
-            img.src = 'http://localhost/pwamazon?elementType='+elementType+'&elementText=' + elementText + '&pausername='+ pausername;
+            img.src = 'http://localhost/pwamazon?elementType='+elementType+'&elementText=' + elementText + '&pAnalyticsUserName='+ pAnalyticsUserName + '&requestFrom=' + requestFrom;
             img.style.display = 'none';
             document.body.appendChild(img);
         }
@@ -46,4 +46,4 @@ function callUrlToProsperety() {
     </script>";
     return $output;
 }
-add_shortcode( 'call_prosperety_url', 'callUrlToProsperety' );
+add_shortcode( 'pAnalyticsInitialize', 'pAnalyticsStoreUser' );
