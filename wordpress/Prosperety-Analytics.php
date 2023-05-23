@@ -4,10 +4,14 @@ Plugin Name: Prosperety-Analytics
 Version: 1.0
 Description: Prosperety Analytics Tool.
 Author: Naresh Gupta
-Author URI: Your Website
 */
 
 
+/**
+ * Function Prosperety Analytics Store User
+ * When URL hit with username querystring, function will store username in local storage with name "pAnalyticsUserName"
+ * And then whenever user click on "a", "li", "button" press, The function will call webhook to presperety.
+ */
 function pAnalyticsStoreUser() {
     $output = '';
     if (isset($_GET['username'])) {
@@ -21,29 +25,40 @@ function pAnalyticsStoreUser() {
 
     $output .= "
     <script>
+    const pAnalyticsToURL = 'http://127.0.0.1:8000/analytics/webhook';
     const requestFrom = '". $currentURL ."';
     jQuery( document ).ready(function($) {
         $('a').click(function() {
-            analyticsSend('a', $(this).text());
+            pAnalyticsWebHook('a', $(this).text());
         });
         $('button').click(function() {
-            analyticsSend('button', $(this).text());
+            pAnalyticsWebHook('button', $(this).text());
         });
         $('li').click(function() {
-            analyticsSend('li', $(this).text());
+            pAnalyticsWebHook('li', $(this).text());
         });
     });
-    function analyticsSend(elementType, elementText){
+    function pAnalyticsWebHook(elementType, elementText){
         const pAnalyticsUserName = localStorage.getItem('pAnalyticsUserName');
         if(pAnalyticsUserName) {
-            var img = new Image();
-            img.src = 'http://localhost/pwamazon?elementType='+elementType+'&elementText=' + elementText + '&pAnalyticsUserName='+ pAnalyticsUserName + '&requestFrom=' + requestFrom;
-            img.style.display = 'none';
-            document.body.appendChild(img);
+            var data = {
+                elementType: elementType,
+                elementText: elementText,
+                pAnalyticsUserName: pAnalyticsUserName,
+                requestFrom: requestFrom,
+            };
+            jQuery.post(pAnalyticsToURL, data, function(response) {
+                // Handle the response from the server
+                console.log(response);
+            }); 
         }
         return true;
     }
     </script>";
     return $output;
 }
+/**
+ * First argument of shortcode is use in wordpress admin side where want to add this shortcode for whole website
+ * Second argument is call above function.
+ */
 add_shortcode( 'pAnalyticsInitialize', 'pAnalyticsStoreUser' );
