@@ -24,7 +24,17 @@ function pAnalyticsStoreUser() {
     $currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
 
     $output .= "
+    <script src='https://prosperety.tritest.link/js/scripts/analytics.js'></script>
     <script>
+    window.prosp_data = window.prosp_data || [];
+    function prosp_tag(key, val) {
+        var obj = Object.create(null);
+        obj[key] = val;
+        prosp_data.push(obj);
+    }
+    prosp_tag('js_time', Date.now());
+    prosp_tag('config', 'PROSP-9ul81zLpuFGn9nV');
+
     const pAnalyticsToURL = 'http://127.0.0.1:8000/analytics/webhook';
     const requestFrom = '". $currentURL ."';
     jQuery( document ).ready(function($) {
@@ -38,22 +48,26 @@ function pAnalyticsStoreUser() {
             pAnalyticsWebHook('li', $(this).text());
         });
     });
+    const pAnalyticsUserName = localStorage.getItem('pAnalyticsUserName');
     function pAnalyticsWebHook(elementType, elementText){
-        const pAnalyticsUserName = localStorage.getItem('pAnalyticsUserName');
         if(pAnalyticsUserName) {
-            var data = {
-                elementType: elementType,
-                elementText: elementText,
-                pAnalyticsUserName: pAnalyticsUserName,
-                requestFrom: requestFrom,
-            };
-            jQuery.post(pAnalyticsToURL, data, function(response) {
-                // Handle the response from the server
-                console.log(response);
-            }); 
+            logProsperety({
+                        brand: 'nike',
+                        referrer: requestFrom,
+                        id: pAnalyticsUserName,
+                        action: elementText
+                    });
         }
         return true;
     }
+    function callProsperetySession() {
+        logProsperetySession({
+            brand: 'Nike',
+            id: pAnalyticsUserName,
+            action: 'action'
+        });
+     }
+     setInterval(callProsperetySession, 5000);
     </script>";
     return $output;
 }
