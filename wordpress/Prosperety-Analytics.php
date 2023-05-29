@@ -24,6 +24,7 @@ function pAnalyticsStoreUser() {
     $currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
 
     $output .= "
+    <script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>
     <script src='https://prosperety.tritest.link/js/scripts/analytics.js'></script>
     <script>
     window.prosp_data = window.prosp_data || [];
