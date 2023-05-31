@@ -39,7 +39,6 @@ function pAnalyticsStoreUser() {
         $days = 1;
 
         $output .= "<script>
-                console.log('user name found');
                 setCookie('$cookie_name', '$cookie_value', '$days');
             </script>";
     }
