@@ -45,14 +45,18 @@ function pAnalyticsStoreUser() {
     $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
     $host = $_SERVER['HTTP_HOST'];
     $currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
-
+    /**
+     * If we use enqueue and add "https://code.jquery.com/jquery-3.6.0.min.js" script to the code, then it's loaded at the end of the page and we want to use the script here.
+     * Because when the page is loaded we want to execute the jQuery function.
+     */
     $output .= "
-    <script src='jquery-3.6.0.min.js'></script>
+    <script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>
     <script src='https://prosperety.tritest.link/js/scripts/analytics.js'></script>
     <script>
     const pAnalyticsToURL = 'http://127.0.0.1:8000/analytics/webhook';
     const requestFrom = '". $currentURL ."';
 
+    var pajQuery = jQuery.noConflict();
     window.prosp_data = window.prosp_data || [];
     function prosp_tag(key, val) {
         var obj = Object.create(null);
@@ -62,7 +66,7 @@ function pAnalyticsStoreUser() {
     prosp_tag('js_time', Date.now());
     prosp_tag('config', 'PROSP-9ul81zLpuFGn9nV');
 
-    jQuery( document ).ready(function($) {
+    pajQuery( document ).ready(function($) {
         $('a').click(function() {
             pAnalyticsWebHook('a', $(this).text());
         });
