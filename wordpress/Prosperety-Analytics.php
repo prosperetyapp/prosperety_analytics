@@ -6,13 +6,25 @@ Description: Prosperety Analytics Tool.
 Author: Naresh Gupta
 */
 
+// add_action('init', 'pAnalyticsStoreUser');
 /**
  * Function Prosperety Analytics Store User
  * When URL hit with username querystring, function will store username in local storage with name "pAnalyticsUserName"
  * And then whenever user click on "a", "li", "button" press, The function will call webhook to presperety.
  */
 function pAnalyticsStoreUser() {
-    $output = '<script>
+    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
+    $host = $_SERVER['HTTP_HOST'];
+    $currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
+    /**
+     * If we use enqueue and add "https://code.jquery.com/jquery-3.6.0.min.js" script to the code, then it's loaded at the end of the page and we want to use the script here.
+     * Because when the page is loaded we want to execute the jQuery function.
+     */
+    $output = '
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://prosperety.tritest.link/js/scripts/analytics.js"></script>
+        <script>
+            const requestFrom = "'. $currentURL .'";
             function setCookie(name, value, days) {
                 var expires = "";
                 if (days) {
@@ -33,29 +45,7 @@ function pAnalyticsStoreUser() {
                 return null;
             }
         </script>';
-    if (isset($_GET['username'])) {
-        $cookie_name = 'pAnalyticsUserName';
-        $cookie_value = $_GET['username'];
-        $days = 1;
-
-        $output .= "<script>
-                setCookie('$cookie_name', '$cookie_value', '$days');
-            </script>";
-    }
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
-    $host = $_SERVER['HTTP_HOST'];
-    $currentURL = $protocol . $host . $_SERVER['REQUEST_URI'];
-    /**
-     * If we use enqueue and add "https://code.jquery.com/jquery-3.6.0.min.js" script to the code, then it's loaded at the end of the page and we want to use the script here.
-     * Because when the page is loaded we want to execute the jQuery function.
-     */
-    $output .= "
-    <script src='https://code.jquery.com/jquery-3.6.0.min.js'></script>
-    <script src='https://prosperety.tritest.link/js/scripts/analytics.js'></script>
-    <script>
-    const pAnalyticsToURL = 'http://127.0.0.1:8000/analytics/webhook';
-    const requestFrom = '". $currentURL ."';
-
+    $output .= "<script>
     var pajQuery = jQuery.noConflict();
     window.prosp_data = window.prosp_data || [];
     function prosp_tag(key, val) {
@@ -89,15 +79,34 @@ function pAnalyticsStoreUser() {
         }
         return true;
     }
-    function callProsperetySession() {
-        logProsperetySession({
+    function callProsperetySession(type) {
+        const payload = {
             brand: 'Nike',
             id: pAnalyticsUserName,
-            action: 'action'
-        });
-     }
-     setInterval(callProsperetySession, 5000);
+            action: 'action',
+            typeOfActivity: type
+        };
+        logProsperetySession(payload);
+    }
+    document.onvisibilitychange = function() {
+        if (document.visibilityState === 'hidden') {
+            callProsperetySession('out');
+        }
+        if (document.visibilityState === 'visible') {
+            callProsperetySession('in');
+        }
+    };
     </script>";
+    if (isset($_GET['username'])) {
+        $cookie_name = 'pAnalyticsUserName';
+        $cookie_value = $_GET['username'];
+        $days = 1;
+
+        $output .= "<script>
+                setCookie('$cookie_name', '$cookie_value', '$days');
+                callProsperetySession('in');
+            </script>";
+    }
     return $output;
 }
 /**
