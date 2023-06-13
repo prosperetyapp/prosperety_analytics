@@ -67,8 +67,8 @@ function pAnalyticsStoreUser() {
             pAnalyticsWebHook('li', $(this).text());
         });
     });
-    const pAnalyticsUserName = getProspUsername('pAnalyticsUserName');
     function pAnalyticsWebHook(elementType, elementText){
+        const pAnalyticsUserName = getProspUsername('pAnalyticsUserName');
         if(pAnalyticsUserName) {
             logProsperety({
                         brand: 'nike',
@@ -80,6 +80,7 @@ function pAnalyticsStoreUser() {
         return true;
     }
     function callProsperetySession(type) {
+        const pAnalyticsUserName = getProspUsername('pAnalyticsUserName');
         const payload = {
             brand: 'Nike',
             id: pAnalyticsUserName,
