@@ -1,0 +1,51 @@
+<script id='my_app_js' src='https://prosperety.tritest.link/js/scripts/analytics.js' async='true'></script> 
+<script> 
+ console.log('Prosperety Plugin Loaded');
+ window.prosp_data = window.prosp_data || [];
+
+function prosp_tag(key, val) {
+  var obj = Object.create(null);
+  obj[key] = val;
+  prosp_data.push(obj);
+}
+prosp_tag("js_time", Date.now());
+prosp_tag("config", "PROSP-9ul81zLpuFGn9nV");
+
+const url_win_string = window.location.href;
+const url_object = new URL(url_win_string);
+const my_param = url_object.searchParams.get("username");
+
+if (my_param != null) {
+    
+    //set cookie
+    setCookie('prosp_username', my_param);
+
+}
+function callProsperetySession(type) {
+        const payload = {
+            brand: 'Nike',
+            id: my_param,
+            action: 'action',
+            typeOfActivity: type
+        };
+        logProsperetySession(payload);
+    }
+    document.onvisibilitychange = function() {
+        if (document.visibilityState === 'hidden') {
+            callProsperetySession('out');
+        }
+        if (document.visibilityState === 'visible') {
+            console.log('Called here');
+            callProsperetySession('in');
+        }
+    };
+function registerListener() {
+    window.wixDevelopersAnalytics.register('head', 
+      (eventName, eventParams) => console.log('wix dev head', eventName, eventParams));
+}
+
+window.wixDevelopersAnalytics ?
+  registerListener() :
+ window.addEventListener('wixDevelopersAnalyticsReady', registerListener);  
+
+</script>
