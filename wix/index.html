@@ -23,7 +23,7 @@ if (my_param != null) {
 }
 function callProsperetySession(type) {
         const payload = {
-            brand: 'Nike',
+            brand: ' ',
             id: my_param,
             action: 'action',
             typeOfActivity: type
@@ -43,6 +43,17 @@ function registerListener() {
     window.wixDevelopersAnalytics.register('head', 
       (eventName, eventParams) => console.log('wix dev head', eventName, eventParams));
 }
+
+ window.addEventListener('load', function() {
+    const btns = document.querySelectorAll('button');
+    console.log('btn', btns)
+    btns.forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        console.log(event)
+        logProsperety({ brand: ' ', referrer: document.referrer, id: my_param, action: event.target.name });
+      });
+    });
+  });
 
 window.wixDevelopersAnalytics ?
   registerListener() :
